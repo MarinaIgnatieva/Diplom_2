@@ -1,11 +1,13 @@
+import pytest
 import requests
 import allure
 
-from data import TestEndpoint, TestData
+from data import TestData
+from urls import TestEndpoint
 from tests.conftest import new_user
 
 
-class TestLoginUser():
+class TestLoginUser:
 
     @allure.title('Проверка входа под существующим пользователем')
     def test_authorization_existing_user_success(self, new_user):
@@ -16,9 +18,10 @@ class TestLoginUser():
             "password": login_pass[1]
         }
 
-        response = requests.post(TestEndpoint.url_login, json = payload)
+        with allure.step('Отправляем запрос на авторизацию пользователя'):
+            response = requests.post(TestEndpoint.url_login, json = payload)
 
-        assert (response.status_code == 200 and response.json()["success"] and
+        assert (response.status_code == TestData.LOGIN_OK["code"] and response.json()["success"] and
                 len(response.json()["accessToken"]) > 0 and
                 len(response.json()["refreshToken"]) > 0)
 
@@ -33,10 +36,11 @@ class TestLoginUser():
             "password": login_pass[1]
         }
 
-        response = requests.post(TestEndpoint.url_login, json = payload)
+        with allure.step('Отправляем запрос на авторизацию пользователя'):
+            response = requests.post(TestEndpoint.url_login, json = payload)
 
-        assert (response.status_code == 401 and response.json()["success"] == False and
-                response.json()["message"] == "email or password are incorrect")
+        assert (response.status_code == TestData.LOGIN_INVALID["code"] and response.json()["success"] == False and
+                response.json()["message"] == TestData.LOGIN_INVALID["message"])
 
     @allure.title('Проверка входа с несуществующим паролем')
     def test_authorization_user_with_nonexisted_password(self, new_user):
@@ -48,7 +52,8 @@ class TestLoginUser():
             "password": password_nonexisted
         }
 
-        response = requests.post(TestEndpoint.url_login, json=payload)
+        with allure.step('Отправляем запрос на авторизацию пользователя'):
+            response = requests.post(TestEndpoint.url_login, json=payload)
 
-        assert (response.status_code == 401 and response.json()["success"] == False and
-                response.json()["message"] == "email or password are incorrect")
+        assert (response.status_code == TestData.LOGIN_INVALID["code"] and response.json()["success"] == False and
+                response.json()["message"] == TestData.LOGIN_INVALID["message"])

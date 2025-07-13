@@ -1,18 +1,10 @@
 from faker import Faker
 
 from helper import generate_random_string
+from tests.conftest import new_user
 
 
-class TestEndpoint():
-
-    url_burger = "https://stellarburgers.nomoreparties.site/api"
-    url_register = f"{url_burger}/auth/register"
-    url_login = f"{url_burger}/auth/login"
-    url_order = f"{url_burger}/orders"
-    url_logout = f"{url_burger}/auth/logout"
-    url_ingredients = f"{url_burger}/ingredients"
-
-class TestData():
+class TestData:
     fake = Faker()
     email = generate_random_string(10) + '@ya.ru'
     password = fake.password(10)
@@ -23,7 +15,40 @@ class TestData():
     email_and_name = [email, name]
     password_and_name = [password, name]
 
+    LOGIN_OK = {
+        "code": 200
+    }
+    LOGIN_INVALID = {
+        "code": 401,
+        "message": "email or password are incorrect"
+    }
 
+    ORDER_OK = {
+        "code": 200
+    }
+    ORDER_WITHOUT_AUTH = {
+        "code": 302,
+        "location": "/login"
+    }
+    ORDER_INVALID_INGR = {
+        "code": 500
+    }
+    ORDER_WITHOUT_INGR = {
+        "code": 400,
+        "message": "Ingredient ids must be provided"
+    }
+
+    REGISTER_OK = {
+        "code": 200
+    }
+    REGISTER_DUPLICATE = {
+        "code": 403,
+        "message": "User already exists"
+    }
+    REGISTER_INVALID = {
+        "code": 403,
+        "message": "Email, password and name are required fields"
+    }
 
 
 

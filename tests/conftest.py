@@ -2,7 +2,7 @@ import pytest
 import requests
 
 from faker import Faker
-from data import TestEndpoint
+from urls import TestEndpoint
 from helper import generate_random_string
 
 
